@@ -45,14 +45,6 @@ class ProductsProvider with ChangeNotifier {
           'https://mp-media.reebonz.com/images/p-a1/reebonz-jm-icon-denim-blue-jeans-size-30-jm-icon-1-a17d7093-864c-448a-9643-3629092bfb1b.jpg;mode=pad;bgcolor=fff;404=404.jpg;width=402;height=500;quality=100',
     ),
     Product(
-      id: 'p6',
-      title: 'Sneaker',
-      description: 'A Sneaker - it is pretty blue!',
-      price: 229.99,
-      imageUrl:
-          'https://data.nbcstations.com/national/DC/sneakers-2/images/sneaker-12.jpg',
-    ),
-    Product(
       id: 'p7',
       title: 'Watch',
       description: 'A red shirt - it is pretty classy!',
