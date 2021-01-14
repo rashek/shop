@@ -57,7 +57,6 @@ class CartItem extends StatelessWidget {
               onTap: () {
                 Provider.of<Cart>(context, listen: false).removeSingleItem(
                   productId,
-                  quantity,
                 );
               },
             ),
