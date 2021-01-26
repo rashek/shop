@@ -15,6 +15,7 @@ enum FilterOption {
 }
 
 var _isInit = true;
+var isLoading = false;
 
 class ProductOverviewScreen extends StatefulWidget {
   @override
@@ -26,8 +27,15 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
 
   @override
   void didChangeDependencies() {
+    setState(() {
+      isLoading = true;
+    });
     if (_isInit) {
-      Provider.of<ProductsProvider>(context).fetchAndSetProducts();
+      Provider.of<ProductsProvider>(context).fetchAndSetProducts().then((_) {
+        setState(() {
+          isLoading = false;
+        });
+      });
     }
     _isInit = false;
     super.didChangeDependencies();
@@ -81,6 +89,10 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ],
         ),
         drawer: AppDrawer(),
-        body: ProductsGrid(_showOnlyFavorites));
+        body: isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : ProductsGrid(_showOnlyFavorites));
   }
 }

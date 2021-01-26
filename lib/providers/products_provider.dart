@@ -95,6 +95,19 @@ class ProductsProvider with ChangeNotifier {
         'https://shopapp-2119b-default-rtdb.firebaseio.com/product.json';
     try {
       final response = await http.get(url);
+      final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProduct = [];
+      extractedData.forEach((prodId, prodData) {
+        loadedProduct.add(Product(
+          id: prodId,
+          title: prodData['title'],
+          description: prodData['description'],
+          price: prodData['price'],
+          isFavorite: prodData['isFavorite'],
+          imageUrl: prodData['imageUrl'],
+        ));
+      });
+      _items = loadedProduct;
       print(json.decode(response.body));
     } catch (error) {
       throw (error);
@@ -133,9 +146,18 @@ class ProductsProvider with ChangeNotifier {
     }
   }
 
-  void updateProduct(Product newProduct, String id) {
+  Future<void> updateProduct(Product newProduct, String id) async {
     final productIndex = _items.indexWhere((prod) => prod.id == id);
     if (productIndex >= 0) {
+      final url =
+          'https://shopapp-2119b-default-rtdb.firebaseio.com/product/$id.json';
+      await http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'imageUrl': newProduct.imageUrl,
+            'price': newProduct.price,
+          }));
       _items[productIndex] = newProduct;
       notifyListeners();
     } else {
