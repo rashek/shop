@@ -6,7 +6,7 @@ import './product.dart';
 import '../models/http_execption.dart';
 
 class ProductsProvider with ChangeNotifier {
-  List<Product> _items;
+  List<Product> _items = [];
   //  = [
   //   Product(
   //     id: 'p1',
@@ -110,8 +110,9 @@ class ProductsProvider with ChangeNotifier {
         ));
       });
       _items = loadedProduct;
+      print(loadedProduct);
       notifyListeners();
-      // print(json.decode(response.body));
+      print(json.decode(response.body));
     } catch (error) {
       throw (error);
     }
@@ -169,7 +170,8 @@ class ProductsProvider with ChangeNotifier {
   }
 
   Future<void> deleteProduct(String id) async {
-    final url = 'https://shopapp-2119b-default-rtdb.firebaseio.com/product/$id';
+    final url =
+        'https://shopapp-2119b-default-rtdb.firebaseio.com/product/$id.json';
     final existingProductIndex = _items.indexWhere((pro) => pro.id == id);
     var existingProduct = _items[existingProductIndex];
     // notifyListeners();

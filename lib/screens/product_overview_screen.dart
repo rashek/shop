@@ -31,13 +31,15 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
       isLoading = true;
     });
     if (_isInit) {
-      Provider.of<ProductsProvider>(context).fetchAndSetProducts().then((_) {
+      Provider.of<ProductsProvider>(context, listen: false)
+          .fetchAndSetProducts()
+          .then((_) {
         setState(() {
           isLoading = false;
         });
       });
     }
-    // _isInit = false;
+    _isInit = false;
     super.didChangeDependencies();
   }
 
