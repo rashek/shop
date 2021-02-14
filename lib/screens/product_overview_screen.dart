@@ -14,9 +14,6 @@ enum FilterOption {
   All,
 }
 
-var _isInit = true;
-var isLoading = false;
-
 class ProductOverviewScreen extends StatefulWidget {
   @override
   _ProductOverviewScreenState createState() => _ProductOverviewScreenState();
@@ -24,6 +21,8 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   bool _showOnlyFavorites = false;
+  var _isInit = true;
+  var isLoading = false;
 
   @override
   void didChangeDependencies() {
@@ -31,9 +30,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
       isLoading = true;
     });
     if (_isInit) {
-      Provider.of<ProductsProvider>(context, listen: false)
-          .fetchAndSetProducts()
-          .then((_) {
+      Provider.of<ProductsProvider>(context).fetchAndSetProducts().then((_) {
         setState(() {
           isLoading = false;
         });

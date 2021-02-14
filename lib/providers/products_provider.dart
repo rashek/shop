@@ -6,6 +6,10 @@ import './product.dart';
 import '../models/http_execption.dart';
 
 class ProductsProvider with ChangeNotifier {
+  final String authToken;
+  final String userId;
+  ProductsProvider(this.authToken, this.userId, this._items);
+
   List<Product> _items = [];
   //  = [
   //   Product(
@@ -93,26 +97,36 @@ class ProductsProvider with ChangeNotifier {
   // }
 
   Future<void> fetchAndSetProducts() async {
-    const url =
-        'https://shopapp-2119b-default-rtdb.firebaseio.com/product.json';
+    var url =
+        'https://shopapp-2119b-default-rtdb.firebaseio.com/product.json?auth=$authToken';
+
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
+      // print(extractedData);
       final List<Product> loadedProduct = [];
+      if (extractedData == null) {
+        return;
+      }
+      url =
+          'https://shopapp-2119b-default-rtdb.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
+      final favoriteResponse = await http.get(url);
+      final favoriteData = json.decode(favoriteResponse.body);
       extractedData.forEach((prodId, prodData) {
         loadedProduct.add(Product(
           id: prodId,
           title: prodData['title'],
           description: prodData['description'],
           price: prodData['price'],
-          isFavorite: prodData['isFavorite'],
+          isFavorite:
+              favoriteData == null ? false : favoriteData[prodId] ?? false,
           imageUrl: prodData['imageUrl'],
         ));
       });
       _items = loadedProduct;
-      print(loadedProduct);
-      notifyListeners();
-      print(json.decode(response.body));
+      // print(loadedProduct);
+      // notifyListeners();
+      // print(json.decode(response.body));
     } catch (error) {
       throw (error);
     }
@@ -120,8 +134,8 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     try {
-      const url =
-          'https://shopapp-2119b-default-rtdb.firebaseio.com/product.json';
+      final url =
+          'https://shopapp-2119b-default-rtdb.firebaseio.com/product.json?auth=$authToken';
       await http
           .post(
         url,
@@ -130,7 +144,6 @@ class ProductsProvider with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
         }),
       )
           .then((res) {
@@ -145,7 +158,7 @@ class ProductsProvider with ChangeNotifier {
         notifyListeners();
       });
     } catch (error) {
-      print(error);
+      // print(error);
       throw error;
     }
   }
@@ -154,7 +167,7 @@ class ProductsProvider with ChangeNotifier {
     final productIndex = _items.indexWhere((prod) => prod.id == id);
     if (productIndex >= 0) {
       final url =
-          'https://shopapp-2119b-default-rtdb.firebaseio.com/product/$id.json';
+          'https://shopapp-2119b-default-rtdb.firebaseio.com/product/$id.json?auth=$authToken';
       await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
@@ -171,7 +184,7 @@ class ProductsProvider with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://shopapp-2119b-default-rtdb.firebaseio.com/product/$id.json';
+        'https://shopapp-2119b-default-rtdb.firebaseio.com/product/$id.json?auth=$authToken';
     final existingProductIndex = _items.indexWhere((pro) => pro.id == id);
     var existingProduct = _items[existingProductIndex];
     // notifyListeners();
